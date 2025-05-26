@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Hypixel Forum Blue Text Remover",
+  "version": "1.0",
+  "description": "Removes blue color from text in Hypixel forum posts",
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "content_scripts": [{
+    "matches": ["*://hypixel.net/threads/*"],
+    "js": ["content.js"]
+  }]
+}
