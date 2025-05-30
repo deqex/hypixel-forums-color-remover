@@ -1,11 +1,19 @@
 {
   "manifest_version": 3,
-  "name": "Hypixel Forum Blue Text Remover",
-  "version": "1.0",
-  "description": "Removes blue color from text in Hypixel forum posts",
+  "name": "Hypixel Forum Text Color Manager",
+  "version": "1.1",
+  "description": "Manages text colors in Hypixel forum posts - remove or change to purple",
   "icons": {
     "48": "icon48.png",
     "128": "icon128.png"
+  },
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
   },
   "content_scripts": [{
     "matches": ["*://hypixel.net/threads/*"],

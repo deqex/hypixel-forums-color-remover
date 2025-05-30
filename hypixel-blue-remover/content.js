@@ -1,22 +1,48 @@
-function removeColorStyles() {
+let settings = { mode: 'remove' };
+
+chrome.storage.sync.get({darkpixel: false}, function(data) {
+    settings.mode = data.darkpixel ? 'darkpixel' : 'remove';
+    processColors();
+});
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.action === 'updateSettings') {
+        settings = request.settings;
+        processColors();
+    }
+});
+
+function processColors() {
     const coloredSpans = document.querySelectorAll('span[style*="color:"]');
     
     coloredSpans.forEach(span => {
-        const style = span.getAttribute('style');
-        let newStyle = style
-            .replace(/color\s*:[^;]+;?/g, '')
-            .replace(/;\s*$/, '')
-            .trim();
+        if (span.closest('.message-signature')) {
+            return;
+        }
         
-        if (newStyle === '') {
-            span.removeAttribute('style');
-        } else {
+        const style = span.getAttribute('style');
+        let newStyle;
+        
+        if (settings.mode === 'remove') {
+            newStyle = style
+                .replace(/color\s*:[^;]+;?/g, '')
+                .replace(/;\s*$/, '')
+                .trim();
+                
+            if (newStyle === '') {
+                span.removeAttribute('style');
+            } else {
+                span.setAttribute('style', newStyle);
+            }
+        } else if (settings.mode === 'darkpixel') {
+            newStyle = style.replace(/color\s*:[^;]+;?/g, '').trim();
+            newStyle = newStyle ? `${newStyle}; color: #e4e2df !important` : 'color: #e4e2df !important';
             span.setAttribute('style', newStyle);
         }
     });
 }
 
-window.addEventListener('load', removeColorStyles);
+window.addEventListener('load', processColors);
 
 const observer = new MutationObserver(mutations => {
     let needsUpdate = false;
@@ -28,7 +54,7 @@ const observer = new MutationObserver(mutations => {
     });
     
     if (needsUpdate) {
-        setTimeout(removeColorStyles, 100);
+        setTimeout(processColors, 100);
     }
 });
 
